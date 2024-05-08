@@ -1,57 +1,76 @@
 from datetime import datetime
 
-#defining the starting balance
-balance = 0
+class Bank:
+    #setting the initial amount with a default value of zero
+    def __init__(self, starting_balance=0):
+        self.balance = starting_balance
+        print(f"Starting balance is {starting_balance}")
+        f = open("saldo.txt", "a")
+        f.write(f"{datetime.now()}\t\t\tStarting Balance: {starting_balance}\n")
+        f.close()
+    #writing to an external file
+    def transaction_log(self, transaction):
+        f = open("saldo.txt", "a")
+        f.write(transaction)
+        f.close()
+    #depositing amount
+    def deposit(self, amount):
+        try:
+            amount = float(amount)
+        except ValueError:
+            amount = 0
+        if amount:
+            self.balance = self.balance + amount
+            self.transaction_log(f"{datetime.now()}\t\t\tDeposit: {amount}\t\t\tBalance: {account.balance}\n")
+            print("Deposit was successful!")
+
+    #withdrawing amount
+    def withdrawal(self, amount):
+        try:
+            amount = float(amount)
+        except ValueError:
+            amount = 0
+        if amount:
+            self.balance = self.balance - amount
+            self.transaction_log(f"{datetime.now()}\t\t\tWithdrawal: {amount}\t\t\tBalance: {account.balance}\n")
+            print("Withdrawal was successful!")
+
+# Start of operating code
 
 while True:
-    
-    transaction = ""
-    while transaction not in ["d", "w"]:
-        transaction = input("Do you want to deposit (d) or withdraw (w) money? ")
+    while True:
+        try:
+            initial_balance = float(input("What is the inital balance? "))
+            break
+        except ValueError:
+            print("This is not a valid number - please use only numbers and no comma")
 
-        if transaction not in ["d", "w"]:
-            print("Please choose (d) for deposit and (w) for withdrawal")
+    account = Bank(initial_balance)
 
-    #deal with deposits    
-    if transaction == "d":
-        while True:
-            deposit = input("How much do you want to deposit? ")
-            try:
-                float(deposit)
-                break
-            except ValueError:
-                print("This is not a valid input - please only use numbers!")
-
-        print(f"Your deposit of {deposit} was successful!")
-        balance += float(deposit)
+    while True:
         
-        print(f"{datetime.now()}\t\t\tDeposit: {deposit}\t\t\tSaldo: {balance}")
-        f = open("saldo.txt", "a")
-        f.write(f"{datetime.now()}\t\t\tDeposit: {deposit}\t\t\tSaldo: {balance}\n")
-        f.close()
+        transaction = ""
+        while transaction not in ["d", "w"]:
+            transaction = input("Do you want to deposit (d) or withdraw (w) money? ")
 
-    #deal with withdrawls
-    if transaction == "w":
-        while True:
-            withdrawl = input("How much do you want to withdrawl? ")
-            try:
-                float(withdrawl)
-                break
-            except ValueError:
-                print("This is not a valid input - please only use numbers!")
+            if transaction not in ["d", "w"]:
+                print("Please choose (d) for deposit and (w) for withdrawal")
 
-        print(f"Your withdrawl of {withdrawl} was successful!")
-        balance -= float(withdrawl)
+        #deal with deposits    
+        if transaction == "d":
+            amount = input("How much do you want to deposit? ")
+            account.deposit(amount)
+            print(f"{datetime.now()}\t\t\tDeposit: {amount}\t\t\tBalance: {account.balance}")
+        else:
+            amount = input("How much do you want to withdraw? ")
+            account.withdrawal(amount)
+            print(f"{datetime.now()}\t\t\tWithdrawal: {amount}\t\t\tBalance: {account.balance}")
 
-        #Print to external file and on console
-        print(f"{datetime.now()}\t\t\tWithdrawl: {withdrawl}\t\t\tSaldo: {balance}")
-        f = open("saldo.txt", "a")
-        f.write(f"{datetime.now()}\t\t\tWithdrawl: {withdrawl}\t\t\tSaldo: {balance}\n")
-        f.close()
+        #asking the user if he wants to continue or leave
+        next_transaction = input("Press any key for another transaction or 'n' for ending your banking session: ")
 
-    #asking the user if he wants to continue or leave
-    next_transaction = input("Press any key for another transaction or 'n' for ending your banking session: ")
+        if next_transaction == "n":
+            break
 
-    if next_transaction == "n":
-        break
+    break
     
